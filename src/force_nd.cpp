@@ -77,6 +77,11 @@ void setConfine()
   obstacle.y /= count;
   force.x = k/pow(obstacle.x-0.5,m);
   force.y = k/pow(obstacle.y-0.5,m);
+  if (count == 1)
+  {
+    force.x = 0;
+    force.y = 0;
+  }
   ROS_INFO("force: %f , %f count: %d",force.x,force.y,count);
 }
 
