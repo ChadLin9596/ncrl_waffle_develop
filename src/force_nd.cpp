@@ -53,6 +53,8 @@ void setConfine()
   int count = 1;
   force.x = 0;
   force.y = 0;
+  obstacle.x = 0;
+  obstacle.y =  0;
   for (size_t i = 0; i < cloud_XYZRGB->points.size(); i++)
   {
     float X = cloud_XYZRGB->points[i].x;
