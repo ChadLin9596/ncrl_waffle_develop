@@ -37,6 +37,7 @@ typedef pcl::PointCloud<pcl::PointXYZRGB> PointCloudXYZRGB;
 PointCloudXYZ::Ptr cloud_XYZ (new PointCloudXYZ);
 PointCloudXYZRGB::Ptr cloud_XYZRGB (new PointCloudXYZRGB);
 geometry_msgs::Point force;
+geometry_msgs::Point obstacle;
 //declare publisher & subscriber
 ros::Publisher pub_XYZRGB;
 ros::Publisher pub_force;
@@ -45,7 +46,8 @@ ros::Subscriber sub_pointcloud;
 // declare global variable
 bool lock = false;
 void pointcloud_processing(void);
-
+float k = 10;
+int m = 2;
 void setConfine()
 {
   int count = 1;
@@ -57,20 +59,22 @@ void setConfine()
     float Y = cloud_XYZRGB->points[i].y;
     float Z = cloud_XYZRGB->points[i].z;
     float distance = sqrt(pow(X,2)+pow(Y,2));
-    if (Z >= 0 && distance <= 0.6)
+    if (Z >= 0 && distance <= 1)
     {
       cloud_XYZRGB->points[i].r = 255;
       cloud_XYZRGB->points[i].g = 0;
       cloud_XYZRGB->points[i].b = 0;
       count += 1;
-      force.x += X;
-      force.y += Y;
+      obstacle.x += X;
+      obstacle.y += Y;
     }
   }
   if (count > 1)
     count = count - 1;
-  force.x /= count;
-  force.y /= count;
+  obstacle.x /= count;
+  obstacle.y /= count;
+  force.x = k/pow(obstacle.x-0.5,m);
+  force.y = k/pow(obstacle.y-0.5,m);
   ROS_INFO("force: %f , %f count: %d",force.x,force.y,count);
 }
 
