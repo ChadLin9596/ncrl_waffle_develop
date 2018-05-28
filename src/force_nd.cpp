@@ -75,8 +75,8 @@ void setConfine()
     count = count - 1;
   obstacle.x /= count;
   obstacle.y /= count;
-  force.x = k/pow(obstacle.x-0.5,m);
-  force.y = k/pow(obstacle.y-0.5,m);
+  force.x = k/pow(obstacle.x,m);
+  force.y = k/pow(obstacle.y,m);
   if (count == 1)
   {
     force.x = 0;

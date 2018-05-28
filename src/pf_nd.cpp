@@ -1,3 +1,9 @@
+/*
+ * Author : Chun-Jong Lin
+ * Date : 28 05 2018
+ * Brief : potenial function obstacle avoiding
+*/
+
 #include <ros/ros.h>
 #include <sensor_msgs/PointCloud2.h>
 #include <geometry_msgs/Point.h>
@@ -13,7 +19,6 @@
 #include <math.h>
 
 geometry_msgs::Point goal; // global frame
-geometry_msgs::Point waffle; // global frame
 geometry_msgs::Point force_att; // local frame
 geometry_msgs::Point force_rep; // local frame
 geometry_msgs::Point force; // local frame
@@ -21,15 +26,14 @@ geometry_msgs::Twist cmd; // control waffle
 
 ros::Subscriber sub_force;
 ros::Publisher pub_cmd;
-
 // state global variable
 bool lock = false;
 double begin;
 double dur;
 double end;
-double K_l = 0.001;
-double K_a = 0.001;
-double Ka = 10;
+double K_l = 0.1; // repulsive linear force gain
+double K_a = 0.1; // repulsive angular force gain
+double Ka = 5; //
 void force_processing();
 
 void force_cb(const geometry_msgs::Point::ConstPtr& msg)
@@ -48,42 +52,50 @@ void force_cb(const geometry_msgs::Point::ConstPtr& msg)
 void force_processing()
 {
   // update local waffle frame
+  double linear =cmd.linear.x;
+  double angular = cmd.angular.z;
   cmd.linear.x = 0;cmd.angular.z = 0;
+
   end = ros::Time::now().toSec();
-  dur = begin - end;
+  dur = end - begin;
+
   // linear update
-  goal.x = goal.x - cmd.linear.x*dur;
+  goal.x = goal.x - dur*linear;
   goal.y = goal.y;
-  double theta = cmd.angular.z;
   // angular update
-  goal.x = goal.x*cos(-theta*dur) - goal.y*sin(-theta*dur);
-  goal.y = goal.x*sin(-theta*dur) + goal.y*cos(-theta*dur);
-  force_att.x = Ka*pow(goal.x,3);
-  force_att.y = Ka*pow(goal.x,3);
-  ROS_INFO("time : %f",dur);
-  ROS_INFO("goal : %f , %f",goal.x,goal.y);
+  goal.x = goal.x*cos(-angular*dur) - goal.y*sin(-angular*dur);
+  goal.y = goal.x*sin(-angular*dur) + goal.y*cos(-angular*dur);
+  // declare attractive firce
+  force_att.x = pow(goal.x,3);
+  force_att.y = pow(goal.y,3);
+
+  ROS_INFO(" ");
+  ROS_INFO("time      : %f",dur);
+  ROS_INFO("goal      : %f , %f",goal.x,goal.y);
+  ROS_INFO("att force : %f , %f",force_att.x,force_att.y);
+  ROS_INFO("rep force : %f , %f",force_rep.x,force_rep.y);
   // ========================
-  force.x = force_att.x - force_rep.x;
-  force.y = force_att.y - force_rep.y;
+  force.x = Ka*force_att.x - K_l*force_rep.x;
+  force.y = Ka*force_att.y - K_a*force_rep.y;
   ROS_INFO("force : %f ,%f",force.x,force.y);
-  cmd.linear.x = K_l*force.x;
-  cmd.angular.z = K_a*force.y;
-  ROS_INFO("cmd : %f , %f",cmd.linear.x,cmd.angular.z);
+  cmd.linear.x = force.x;
+  cmd.angular.z = 10*force.y;
   // =======set confine==========
 
-  if (cmd.linear.x >= 0.6)
-    cmd.linear.x = 0.6;
-  else if (cmd.linear.x <= -0.6)
-    cmd.linear.x = -0.6;
+  if (cmd.linear.x >= 0.1)
+    cmd.linear.x = 0.1;
+  else if (cmd.linear.x <= -0.1)
+    cmd.linear.x = -0.1;
   else
     cmd.linear.x = cmd.linear.x;
 
-  if (cmd.angular.z >= 1)
-    cmd.angular.z = 1;
-  else if (cmd.angular.z <= -1)
-    cmd.angular.z = -1;
+  if (cmd.angular.z >= 0.5)
+    cmd.angular.z = 0.5;
+  else if (cmd.angular.z <= -0.5)
+    cmd.angular.z = -0.5;
   else
     cmd.angular.z = cmd.angular.z;
+  ROS_INFO("cmd       : %f , %f",cmd.linear.x,cmd.angular.z);
   // ============================
   pub_cmd.publish(cmd);
   begin = ros::Time::now().toSec();
@@ -94,10 +106,10 @@ int main(int argc, char** argv)
 {
 	ros::init (argc, argv, "pf_nd");
 	ros::NodeHandle nh;
-	goal.x = 5;
-	goal.y = 0;
+  goal.x = 0;
+  goal.y = 2;
   begin = ros::Time::now().toSec();
-	sub_force = nh.subscribe<geometry_msgs::Point> ("/ncrl/repulsive/force",10,force_cb);
+  sub_force = nh.subscribe<geometry_msgs::Point> ("/ncrl/repulsive/force",10,force_cb);
 	pub_cmd = nh.advertise<geometry_msgs::Twist> ("/waffle1/cmd_vel",10);
 
 	ros::spin();
