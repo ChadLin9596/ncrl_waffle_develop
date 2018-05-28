@@ -73,8 +73,11 @@ void setConfine()
   }
   if (count > 1)
     count = count - 1;
-  obstacle.x /= count;
-  obstacle.y /= count;
+  ROS_INFO(" ");  ROS_INFO("obstacle1 : %f,%f",obstacle.x, obstacle.y);
+  ROS_INFO("obstacle1 : %f,%f",obstacle.x, obstacle.y);
+  obstacle.x = obstacle.x/count;
+  obstacle.y = obstacle.y/count;
+  ROS_INFO("obstacle2 : %f,%f",obstacle.x, obstacle.y);
   force.x = k/pow(obstacle.x,m);
   force.y = k/pow(obstacle.y,m);
   if (count == 1)
