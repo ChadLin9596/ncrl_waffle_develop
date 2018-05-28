@@ -73,7 +73,7 @@ void setConfine()
   }
   if (count > 1)
     count = count - 1;
-  ROS_INFO(" ");  ROS_INFO("obstacle1 : %f,%f",obstacle.x, obstacle.y);
+  ROS_INFO(" ");
   ROS_INFO("obstacle1 : %f,%f",obstacle.x, obstacle.y);
   obstacle.x = obstacle.x/count;
   obstacle.y = obstacle.y/count;
