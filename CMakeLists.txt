@@ -203,3 +203,5 @@ include_directories(
 # catkin_add_nosetests(test)
 add_executable(force_nd src/force_nd.cpp)
 target_link_libraries(force_nd ${catkin_LIBRARIES})
+add_executable(pf_nd src/pf_nd.cpp)
+target_link_libraries(pf_nd ${catkin_LIBRARIES})
