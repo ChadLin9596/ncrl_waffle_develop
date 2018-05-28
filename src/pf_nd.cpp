@@ -12,6 +12,9 @@
 // cpp include
 #include <math.h>
 
+double K_l = 0.00001;
+double K_a = 0.001;
+
 geometry_msgs::Point goal; // global frame
 geometry_msgs::Point waffle; // global frame
 geometry_msgs::Point force_att; // local frame
@@ -27,15 +30,46 @@ bool lock = false;
 double begin;
 double dur;
 double end;
+void force_processing();
 
 void force_cb(const geometry_msgs::Point::ConstPtr& msg)
 {
   if (!lock){
     lock = true;
     force_rep = *msg;
-    ROS_INFO("force : %f , %f",force_rep.x,force_rep.y);
-
   }
+  else
+  {
+    std::cout << "lock" << std::endl;
+  }
+  force_processing();
+}
+
+void force_processing()
+{
+  force.x = force_att.x - force_rep.x;
+  force.y = force_att.y - force_rep.y;
+  ROS_INFO("force : %f ,%f",force.x,force.y);
+  cmd.linear.x = K_l*force.x;
+  cmd.angular.z = K_a*force.y;
+  ROS_INFO("cmd : %f , %f",cmd.linear.x,cmd.angular.z);
+// =======set confine==========
+  if (cmd.linear.x >= 0.7)
+    cmd.linear.x = 0.7;
+  else if (cmd.linear.x <= -0.7)
+    cmd.linear.x = -0.7;
+  else
+    cmd.linear.x = cmd.linear.x;
+
+  if (cmd.angular.z >= 1)
+    cmd.angular.z = 1;
+  else if (cmd.angular.z <= -1)
+    cmd.angular.z = -1;
+  else
+    cmd.angular.z = cmd.angular.z;
+// ============================
+  pub_cmd.publish(cmd);
+  lock = false;
 }
 
 int main(int argc, char** argv)

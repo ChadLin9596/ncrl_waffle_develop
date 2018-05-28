@@ -47,7 +47,7 @@ ros::Subscriber sub_pointcloud;
 bool lock = false;
 void pointcloud_processing(void);
 float k = 10;
-int m = 2;
+int m = 3;
 void setConfine()
 {
   int count = 1;
