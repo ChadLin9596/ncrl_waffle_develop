@@ -32,9 +32,9 @@ double begin;
 double dur;
 double end;
 double Ka_l = 0.01; // repulsive linear force gain
-double Ka_a = 0.5; // repulsive angular force gain
+double Ka_a = 0; // repulsive angular force gain
 double Kr_l = 0.000007;   // repulsive linear force gain
-double Kr_a = 0.000049;   // repulsive angular force gain
+double Kr_a = 0;   // repulsive angular force gain
 void force_processing();
 
 void force_cb(const geometry_msgs::Point::ConstPtr& msg)
@@ -53,7 +53,7 @@ void force_cb(const geometry_msgs::Point::ConstPtr& msg)
 void force_processing()
 {
   // update local waffle frame
-  double linear =cmd.linear.x;
+  double linear = cmd.linear.x;
   double angular = cmd.angular.z;
   cmd.linear.x = 0;cmd.angular.z = 0;
 
@@ -66,7 +66,9 @@ void force_processing()
   // angular update
   goal.x = goal.x*cos(-angular*dur) - goal.y*sin(-angular*dur);
   goal.y = goal.x*sin(-angular*dur) + goal.y*cos(-angular*dur);
-  // declare attractive firce
+  // declare attractive force
+  //double X = gsqrt(pow(goal.x,3));
+  //double Y = oal.ysqrt(pow(goal.y,3));
   force_att.x = pow(goal.x,3);
   force_att.y = pow(goal.y,3);
 
@@ -107,8 +109,8 @@ int main(int argc, char** argv)
 {
 	ros::init (argc, argv, "pf_nd");
 	ros::NodeHandle nh;
-  goal.x = 0;
-  goal.y = -5;
+  goal.x = 5;
+  goal.y = 0;
   begin = ros::Time::now().toSec();
   sub_force = nh.subscribe<geometry_msgs::Point> ("/ncrl/repulsive/force",10,force_cb);
 	pub_cmd = nh.advertise<geometry_msgs::Twist> ("/waffle1/cmd_vel",10);

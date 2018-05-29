@@ -62,8 +62,16 @@ void setConfine()
       cloud_XYZRGB->points[i].r = 255;
       cloud_XYZRGB->points[i].g = 0;
       cloud_XYZRGB->points[i].b = 0;
-      double nx = X/sqrt(pow(X,2));
-      double ny = Y/sqrt(pow(Y,2));
+      double nx = X;
+      double ny = Y;
+      if (nx >= 0)
+          nx = 1;
+      else
+          nx = -1;
+      if (ny >= 0)
+          ny = 1;
+      else
+          ny = -1;
       force.x += nx/pow(X,m);
       force.y += ny/pow(Y,m);
       count += 1;
