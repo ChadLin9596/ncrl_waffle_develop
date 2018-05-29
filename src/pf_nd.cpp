@@ -32,9 +32,9 @@ double begin;
 double dur;
 double end;
 double Ka_l = 0.01; // repulsive linear force gain
-double Ka_a = 0.1; // repulsive angular force gain
+double Ka_a = 0.5; // repulsive angular force gain
 double Kr_l = 0.000007;   // repulsive linear force gain
-double Kr_a = 0.00001;   // repulsive angular force gain
+double Kr_a = 0.000049;   // repulsive angular force gain
 void force_processing();
 
 void force_cb(const geometry_msgs::Point::ConstPtr& msg)
@@ -107,8 +107,8 @@ int main(int argc, char** argv)
 {
 	ros::init (argc, argv, "pf_nd");
 	ros::NodeHandle nh;
-  goal.x = 4;
-  goal.y = 0;
+  goal.x = 0;
+  goal.y = -5;
   begin = ros::Time::now().toSec();
   sub_force = nh.subscribe<geometry_msgs::Point> ("/ncrl/repulsive/force",10,force_cb);
 	pub_cmd = nh.advertise<geometry_msgs::Twist> ("/waffle1/cmd_vel",10);
