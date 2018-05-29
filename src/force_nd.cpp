@@ -61,7 +61,7 @@ void setConfine()
     float Y = cloud_XYZRGB->points[i].y;
     float Z = cloud_XYZRGB->points[i].z;
     float distance = sqrt(pow(X,2)+pow(Y,2));
-    if (Z >= 0 && distance <= 2)
+    if (Z >= 0 && distance <= 1 && X > 0)
     {
       cloud_XYZRGB->points[i].r = 255;
       cloud_XYZRGB->points[i].g = 0;
