@@ -17,6 +17,9 @@
 #include <termios.h>
 // cpp include
 #include <math.h>
+#include <iostream>
+#include <cmath>
+#include <cfloat>
 
 geometry_msgs::Point goal; // global frame
 geometry_msgs::Point force_att; // local frame
@@ -31,9 +34,9 @@ bool lock = false;
 double begin;
 double dur;
 double end;
-double Ka_l = 0.01; // repulsive linear force gain
+double Ka_l = 1; // repulsive linear force gain
 double Ka_a = 0; // repulsive angular force gain
-double Kr_l = 0.000007;   // repulsive linear force gain
+double Kr_l = 0.000001;   // repulsive linear force gain
 double Kr_a = 0;   // repulsive angular force gain
 void force_processing();
 
@@ -42,6 +45,8 @@ void force_cb(const geometry_msgs::Point::ConstPtr& msg)
   if (!lock){
     lock = true;
     force_rep = *msg;
+    if (isinf(force.y))
+      force.y =99999999999;
   }
   else
   {
