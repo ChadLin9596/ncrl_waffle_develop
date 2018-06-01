@@ -34,10 +34,10 @@ bool lock = false;
 double begin;
 double dur;
 double end;
-double Ka_l = 10; // repulsive linear force gain 10
-double Ka_a = 1; // repulsive angular force gain 1
-double Kr_l = 1e-11;   // repulsive linear force gain 1e-11
-double Kr_a = 2;   // repulsive angular force gain 2
+double Ka_l = 100; // repulsive linear force gain 10
+double Ka_a = 0.3; // repulsive angular force gain 1
+double Kr_l = 5e-11;  // repulsive linear force gain 1e-11
+double Kr_a = 0.6;   // repulsive angular force gain 2
 void force_processing();
 
 void force_cb(const geometry_msgs::Point::ConstPtr& msg)
@@ -97,10 +97,10 @@ void force_processing()
   else
     cmd.linear.x = cmd.linear.x;
 
-  if (cmd.angular.z >= 0.7)
-    cmd.angular.z = 0.7;
-  else if (cmd.angular.z <= -0.7)
-    cmd.angular.z = -0.7;
+  if (cmd.angular.z >= 1)
+    cmd.angular.z = 1;
+  else if (cmd.angular.z <= -1)
+    cmd.angular.z = -1;
   else
     cmd.angular.z = cmd.angular.z;
   ROS_INFO("cmd       : %f , %f",cmd.linear.x,cmd.angular.z);
@@ -114,7 +114,7 @@ int main(int argc, char** argv)
 {
 	ros::init (argc, argv, "pf_nd");
 	ros::NodeHandle nh;
-  goal.x = 4;
+  goal.x = 5;
   goal.y = 0;
   begin = ros::Time::now().toSec();
   sub_force = nh.subscribe<geometry_msgs::Point> ("/ncrl/repulsive/force",10,force_cb);

@@ -3,31 +3,7 @@
  * Date : 27 05 2018
  * Brief : Use VLP-16 lidar to detect obstacle then calculate the repulsive force 
 */
-
-//ros include 
-#include <ros/ros.h>
-#include <sensor_msgs/PointCloud2.h>
-#include <geometry_msgs/Point.h>
-#include <visualization_msgs/Marker.h>
-// cpp include
-#include <math.h>
-// pcl include
-#include <pcl_ros/point_cloud.h>
-#include <pcl/io/io.h>
-#include <pcl_conversions/pcl_conversions.h>
-#include <pcl/filters/filter.h>
-#include <pcl/ModelCoefficients.h>
-#include <pcl/point_types.h>
-#include <pcl/io/pcd_io.h>
-#include <pcl/filters/extract_indices.h>
-#include <pcl/filters/voxel_grid.h>
-#include <pcl/features/normal_3d.h>
-#include <pcl/kdtree/kdtree.h>
-#include <pcl/sample_consensus/method_types.h>
-#include <pcl/sample_consensus/model_types.h>
-#include <pcl/segmentation/sac_segmentation.h>
-#include <pcl/segmentation/extract_clusters.h>
-#include <pcl/common/transforms.h>
+#include <ncrl_waffle_develop/force_nd.h>
 
 // define point cloud type
 typedef pcl::PointCloud<pcl::PointXYZ> PointCloudXYZ;
@@ -57,7 +33,7 @@ void setConfine()
     float Y = cloud_XYZRGB->points[i].y;
     float Z = cloud_XYZRGB->points[i].z;
     float distance = sqrt(pow(X,2)+pow(Y,2));
-    if (Z >= -0.1 && Z <= 0.1&& distance <= 1 && X > 0)
+    if (Z >= -0.1 && Z <= 0.1&& distance <= 1 && X > 0) // set confine
     {
       cloud_XYZRGB->points[i].r = 255;
       cloud_XYZRGB->points[i].g = 0;
