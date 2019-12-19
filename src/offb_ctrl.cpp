@@ -12,6 +12,7 @@
 #include <unistd.h>
 #include <cstdio>
 #include <termios.h>
+
 geometry_msgs::Twist cmd;
 
 ros::Publisher cmd_pub;
@@ -52,20 +53,25 @@ void keyboard_control()
     switch (c)
     {
     case 119: //w
-      cmd.linear.x += 0.05;
+      cmd.linear.x += 0.3;
       break;
     case 115: //s
-      cmd.linear.x -= 0.05;
+      cmd.linear.x -= 0.3;
       break;
     case 97: //a
-      cmd.angular.z += 0.05;
+      cmd.angular.z += 0.1;
       break;
     case 100: //d
-      cmd.angular.z -= 0.05;
+      cmd.angular.z -= 0.1;
       break;
     case 114: //r
       cmd.linear.x = 0;
       cmd.angular.z = 0;
+      break;
+    case 103: //g
+      cmd.linear.x = 0;
+      cmd.angular.z = 1.4;
+      break;
     }
   }
 }
@@ -74,7 +80,8 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "offb_ctrl");
   ros::NodeHandle nh;
-  cmd_pub = nh.advertise<geometry_msgs::Twist>("waffle1/cmd_vel",1);
+  // declare subscriber
+  cmd_pub = nh.advertise<geometry_msgs::Twist>("/cmd_vel",1);
   cmd.linear.x = 0;
   cmd.angular.z = 0;
 
