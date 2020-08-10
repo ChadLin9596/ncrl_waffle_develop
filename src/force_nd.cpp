@@ -1,5 +1,5 @@
 /*
- * Author : Chun-Jong Lin
+ * Author : Chun-Jung Lin
  * Date : 27 05 2018
  * Brief : Use VLP-16 lidar to detect obstacle then calculate the repulsive force 
 */
@@ -22,6 +22,8 @@ ros::Subscriber sub_pointcloud;
 bool lock = false;
 void pointcloud_processing(void);
 int m = 2;
+
+// caculate the repulsive force with the number and the distance of the points in ROI
 void setConfine()
 {
   int count = 0;
@@ -33,7 +35,7 @@ void setConfine()
     float Y = cloud_XYZRGB->points[i].y;
     float Z = cloud_XYZRGB->points[i].z;
     float distance = sqrt(pow(X,2)+pow(Y,2));
-    if (Z >= -0.1 && Z <= 0.1&& distance <= 1 && X > 0) // set confine
+    if (Z >= -0.1 && Z <= 0.1&& distance <= 1 && X > 0) // ROI
     {
       cloud_XYZRGB->points[i].r = 255;
       cloud_XYZRGB->points[i].g = 0;
