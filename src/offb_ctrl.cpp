@@ -1,5 +1,5 @@
 /*
- * Author : Chun-Jong Lin
+ * Author : Chun-Jung Lin
  * Date : 28 05 2018
  * Brief : using keyboard control waffle
 */
